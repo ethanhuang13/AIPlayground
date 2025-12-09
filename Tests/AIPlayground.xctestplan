@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "2FB78762-BD2E-4F42-8D22-704F40803A22",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "performanceAntipatternCheckerEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "AIPlaygroundTests",
+        "name" : "AIPlaygroundTests"
+      }
+    }
+  ],
+  "version" : 1
+}
