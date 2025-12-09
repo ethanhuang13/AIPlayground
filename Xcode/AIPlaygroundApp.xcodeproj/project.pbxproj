@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6C59332A2EE7E59D00EDAB21 /* AIPlayground in Frameworks */ = {isa = PBXBuildFile; productRef = 6C5933292EE7E59D00EDAB21 /* AIPlayground */; };
+		6C5933302EE7E8CB00EDAB21 /* AIPlayground in Frameworks */ = {isa = PBXBuildFile; productRef = 6C59332F2EE7E8CB00EDAB21 /* AIPlayground */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6C59332A2EE7E59D00EDAB21 /* AIPlayground in Frameworks */,
+				6C5933302EE7E8CB00EDAB21 /* AIPlayground in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,7 +78,7 @@
 			);
 			name = AIPlaygroundApp;
 			packageProductDependencies = (
-				6C5933292EE7E59D00EDAB21 /* AIPlayground */,
+				6C59332F2EE7E8CB00EDAB21 /* AIPlayground */,
 			);
 			productName = AIPlayground;
 			productReference = 6CD976C52EE7E2A900B86C94 /* AIPlaygroundApp.app */;
@@ -268,6 +268,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "AI Playground";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -313,6 +314,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "AI Playground";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -369,7 +371,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6C5933292EE7E59D00EDAB21 /* AIPlayground */ = {
+		6C59332F2EE7E8CB00EDAB21 /* AIPlayground */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AIPlayground;
 		};

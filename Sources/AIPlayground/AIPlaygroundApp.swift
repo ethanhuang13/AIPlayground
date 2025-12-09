@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
+import Views
 
 @main
 struct AIPlaygroundApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
+  var body: some Scene {
+    WindowGroup {
+      AppView()
     }
+  }
 }
