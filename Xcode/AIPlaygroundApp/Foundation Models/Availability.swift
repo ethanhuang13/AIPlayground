@@ -1,10 +1,10 @@
-// From https://developer.apple.com/events/resources/code-along-205/
+// Modified from https://developer.apple.com/events/resources/code-along-205/
 // 1.3: Handling model availability
 
 import FoundationModels
 import Playgrounds
 
-#Playground {
+#Playground("availability") {
   let model = SystemLanguageModel.default
 
   // The availability property provides detailed information on the model's state.
@@ -24,4 +24,10 @@ import Playgrounds
   case .unavailable(let other):
     print("The model is unavailable for an unknown reason.")
   }
+}
+
+#Playground("isAvailable") {
+  let model = SystemLanguageModel.default
+
+  print("The model is \(model.isAvailable ? "available" : "unavailable").")
 }
