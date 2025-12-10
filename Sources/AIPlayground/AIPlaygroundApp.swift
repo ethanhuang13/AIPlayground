@@ -8,7 +8,7 @@
 import SwiftUI
 import Views
 
-@main
+//@main
 struct AIPlaygroundApp: App {
   var body: some Scene {
     WindowGroup {
