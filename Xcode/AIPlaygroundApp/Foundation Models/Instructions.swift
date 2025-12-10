@@ -3,6 +3,12 @@ import Playgrounds
 
 private let prompt = "學習 Swift 程式語言的策略？"
 
+#Playground("No instructions") {
+  let session = LanguageModelSession()
+
+  let response = try await session.respond(to: prompt)
+}
+
 #Playground("Instructions") {
   let instructions = """
     你是一名資深軟體工程師與講師，樂於分享經驗與知識。
@@ -10,12 +16,6 @@ private let prompt = "學習 Swift 程式語言的策略？"
   let session = LanguageModelSession(
     instructions: instructions
   )
-
-  let response = try await session.respond(to: prompt)
-}
-
-#Playground("No instructions") {
-  let session = LanguageModelSession()
 
   let response = try await session.respond(to: prompt)
 }
