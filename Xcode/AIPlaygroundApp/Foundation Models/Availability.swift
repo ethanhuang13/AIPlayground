@@ -21,7 +21,7 @@ import Playgrounds
   case .unavailable(.modelNotReady):
     print("The model is not ready yet. Please try again later.")
 
-  case .unavailable(let other):
+  case .unavailable:
     print("The model is unavailable for an unknown reason.")
   }
 }
