@@ -2,7 +2,7 @@ import FoundationModels
 import Playgrounds
 
 @Generable(description: "貓的基本資料")
-private struct CatProfile {
+struct CatProfile {
   @Guide(description: "中文名字")
   var name: String
 
