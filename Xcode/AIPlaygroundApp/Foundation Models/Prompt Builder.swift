@@ -20,7 +20,7 @@ import Playgrounds
   let prompt = Prompt {
     "我不喜歡太黏人的貓。"
     if let previousCat {
-      "參考之前選擇過的貓："
+      "以下是使用者之前的貓，首先建議相同的性格與專長，但是換個名字與較小的年齡："
       previousCat
     }
   }
