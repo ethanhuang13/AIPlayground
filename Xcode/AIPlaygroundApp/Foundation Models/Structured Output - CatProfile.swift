@@ -37,7 +37,7 @@ enum CatPersonality: String {
   )
 
   let response = try await session.respond(
-    to: "我不喜歡太黏人的貓", // user input
+    to: "我不喜歡太黏人的貓",  // user input
     generating: [CatProfile].self,
     options: GenerationOptions(sampling: .greedy)
   )
