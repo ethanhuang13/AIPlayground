@@ -30,7 +30,7 @@ private struct WeatherConditionTool: Tool {
 
 #Playground {
   let session = LanguageModelSession(
-    tools: [WeatherConditionTool()],  // 模型會判斷需要天氣資料，自動呼叫工具
+    tools: [WeatherConditionTool()],  // 模型會根據語意來判斷需要天氣資料，而自動呼叫工具
     instructions: "描述當地天氣資訊"
   )
   let response = try await session.respond(to: "全糖市")
