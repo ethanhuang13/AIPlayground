@@ -56,8 +56,10 @@ class BenchmarkingGenerator<G: Generable> {
         options: GenerationOptions(sampling: .greedy)
       )
 
+      var isFirstResponse = true
       for try await partialResponse in stream {
-        if self.response.isEmpty {
+        if isFirstResponse {
+          isFirstResponse = false
           self.firstTokenDate = Date()
           logger.log("First token in \(self.firstTokenDuration)")
         }
@@ -94,10 +96,12 @@ struct BenchmarkingView<G: GenerableView>: View {
   init(instructions: String, prompt: String, prewarm: Bool) {
     self.instructions = instructions
     self.prompt = prompt
-    self.prewarm = prewarm
-    self.generator = BenchmarkingGenerator(
-      instructions: instructions,
-      prewarm: prewarm
+    _prewarm = State(initialValue: prewarm)
+    _generator = State(
+      initialValue: BenchmarkingGenerator(
+        instructions: instructions,
+        prewarm: prewarm
+      )
     )
   }
 
@@ -187,6 +191,7 @@ struct BenchmarkingView<G: GenerableView>: View {
           to: Prompt { prompt },
           streaming: false
         )
+        // TODO: 應增加 error handling 與錯誤提示
       }
     } label: {
       Label("生成（單次）", systemImage: "1.circle")
@@ -204,6 +209,7 @@ struct BenchmarkingView<G: GenerableView>: View {
           to: Prompt { prompt },
           streaming: true
         )
+        // TODO: 應增加 error handling 與錯誤提示
       }
     } label: {
       Label("生成（串流）", systemImage: "water.waves")
