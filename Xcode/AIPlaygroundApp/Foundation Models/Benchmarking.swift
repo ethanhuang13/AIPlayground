@@ -90,6 +90,8 @@ class BenchmarkingGenerator<G: Generable> {
   }
 }
 
+protocol GenerableView: Generable where PartiallyGenerated: View {}
+
 struct BenchmarkingView<G: GenerableView>: View {
   private let instructions: String
   private let prompt: String
@@ -262,7 +264,39 @@ struct BenchmarkingView<G: GenerableView>: View {
   }
 }
 
-protocol GenerableView: Generable where PartiallyGenerated: View {}
+extension CatProfile: GenerableView {}
+extension CatProfile.PartiallyGenerated: View {
+  var body: some View {
+    if let name = self.name {
+      VStack(alignment: .leading) {
+        HStack {
+          Text(name)
+            .font(.title)
+          if let age = self.age {
+            Text("\(age) 歲")
+          }
+        }
+        if let personality = self.personality {
+          Text("性格：\(personality.rawValue)")
+        }
+        if let expertise = self.expertise {
+          Text("專長：\(expertise)")
+        }
+      }
+    }
+  }
+}
+
+#Preview("CatProfile") {
+  BenchmarkingView<CatProfile>(
+    instructions: """
+      User locale: zh-Hant-tw
+      這是一款養貓模擬遊戲。生成一隻貓作為建議選項
+      """,
+    prompt: "我不喜歡太黏人的貓",
+    shouldPrewarm: false
+  )
+}
 
 @Generable
 struct CatProfiles: GenerableView {
@@ -274,35 +308,19 @@ extension CatProfiles.PartiallyGenerated: View {
   var body: some View {
     if let catProfiles {
       ForEach(catProfiles) { catProfile in
-        if let name = catProfile.name {
-          VStack(alignment: .leading) {
-            HStack {
-              Text(name)
-                .font(.title)
-              if let age = catProfile.age {
-                Text("\(age) 歲")
-              }
-            }
-            if let personality = catProfile.personality {
-              Text("性格：\(personality.rawValue)")
-            }
-            if let expertise = catProfile.expertise {
-              Text("專長：\(expertise)")
-            }
-          }
-        }
+        catProfile
       }
     }
   }
 }
 
-#Preview {
+#Preview("CatProfiles") {
   BenchmarkingView<CatProfiles>(
     instructions: """
       User locale: zh-Hant-tw
-      這是一款養貓模擬遊戲。提供 5 隻貓作為一開始的建議選項
+      這是一款養貓模擬遊戲。生成多隻貓作為建議選項
       """,
     prompt: "我不喜歡太黏人的貓",
-    shouldPrewarm: true
+    shouldPrewarm: false
   )
 }
