@@ -10,7 +10,7 @@ private let logger = Logger(
 @Observable
 @MainActor
 class BenchmarkingGenerator<G: Generable> {
-  private(set) var response: [G.PartiallyGenerated] = []
+  private(set) var response: G.PartiallyGenerated?
   private var session: LanguageModelSession
   private var shouldPrewarm: Bool
 
@@ -56,7 +56,7 @@ class BenchmarkingGenerator<G: Generable> {
     if streaming {
       let stream = session.streamResponse(
         to: prompt,
-        generating: [G].self,
+        generating: G.self,
         options: GenerationOptions(sampling: .greedy)
       )
 
@@ -78,7 +78,7 @@ class BenchmarkingGenerator<G: Generable> {
         try await session
         .respond(
           to: prompt,
-          generating: [G].self,
+          generating: G.self,
           options: GenerationOptions(sampling: .greedy)
         )
         .content
@@ -127,7 +127,7 @@ struct BenchmarkingView<G: GenerableView>: View {
           if generator.totalDuration > 0 {
             totalDurationView
           }
-          if generator.response.isEmpty == false
+          if generator.response != nil
             && generator.isResponding == false
           {
             resetButton
@@ -135,10 +135,10 @@ struct BenchmarkingView<G: GenerableView>: View {
         }
 
         Section {
-          if generator.response.isEmpty {
-            noContentView
-          } else {
+          if let generatedContentView = generator.response?.body {
             generatedContentView
+          } else {
+            noContentView
           }
         }
       }
@@ -260,35 +260,36 @@ struct BenchmarkingView<G: GenerableView>: View {
     }
     .disabled(generator.isResponding)
   }
-
-  @ViewBuilder
-  private var generatedContentView: some View {
-    ForEach(generator.response) { item in
-      item
-    }
-  }
 }
 
-protocol GenerableView: Generable
-where PartiallyGenerated: View & Identifiable {}
+protocol GenerableView: Generable where PartiallyGenerated: View {}
 
-extension CatProfile: GenerableView {}
-extension CatProfile.PartiallyGenerated: View {
+@Generable
+struct CatProfiles: GenerableView {
+  @Guide(description: "貓", .count(5))
+  var catProfiles: [CatProfile]
+}
+
+extension CatProfiles.PartiallyGenerated: View {
   var body: some View {
-    if let name = self.name {
-      VStack(alignment: .leading) {
-        HStack {
-          Text(name)
-            .font(.title)
-          if let age = self.age {
-            Text("\(age) 歲")
+    if let catProfiles {
+      ForEach(catProfiles) { catProfile in
+        if let name = catProfile.name {
+          VStack(alignment: .leading) {
+            HStack {
+              Text(name)
+                .font(.title)
+              if let age = catProfile.age {
+                Text("\(age) 歲")
+              }
+            }
+            if let personality = catProfile.personality {
+              Text("性格：\(personality.rawValue)")
+            }
+            if let expertise = catProfile.expertise {
+              Text("專長：\(expertise)")
+            }
           }
-        }
-        if let personality = self.personality {
-          Text("性格：\(personality.rawValue)")
-        }
-        if let expertise = self.expertise {
-          Text("專長：\(expertise)")
         }
       }
     }
@@ -296,18 +297,7 @@ extension CatProfile.PartiallyGenerated: View {
 }
 
 #Preview {
-  BenchmarkingView<CatProfile>(
-    instructions: """
-      User locale: zh-Hant-tw
-      這是一款養貓模擬遊戲。提供 5 隻貓作為一開始的建議選項
-      """,
-    prompt: "我不喜歡太黏人的貓",
-    shouldPrewarm: true
-  )
-}
-
-#Preview {
-  BenchmarkingView<CatProfilePro>(
+  BenchmarkingView<CatProfiles>(
     instructions: """
       User locale: zh-Hant-tw
       這是一款養貓模擬遊戲。提供 5 隻貓作為一開始的建議選項
