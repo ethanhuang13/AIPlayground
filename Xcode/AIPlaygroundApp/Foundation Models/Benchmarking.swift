@@ -24,6 +24,8 @@ class BenchmarkingGenerator<G: Generable> {
     if prewarm {
       session.prewarm()
     }
+
+    logger.log("Init")
   }
 
   func generate(to prompt: Prompt, streaming: Bool) async throws {
@@ -89,22 +91,34 @@ struct BenchmarkingView<G: GenerableView>: View {
 
   var body: some View {
     NavigationStack {
-      VStack {
+      List {
         if generator.response.isEmpty {
           noContentView
         } else {
           list
-            .toolbar {
-              ToolbarItemGroup(placement: .navigation) {
-                oneShotButton
-                streamButton
-                Toggle("Prewarm", isOn: $prewarm)
-              }
-            }
+        }
+      }
+      .toolbar {
+        ToolbarItemGroup(placement: .automatic) {
+          resetButton
+          oneShotButton
+          streamButton
+          prewarmToggle
         }
       }
       .onChange(of: prewarm) { _, _ in
         resetGenerator()
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var resetButton: some View {
+    if generator.response.isEmpty == false && generator.isResponding == false {
+      Button {
+        resetGenerator()
+      } label: {
+        Image(systemName: "arrow.clockwise")
       }
     }
   }
@@ -123,7 +137,7 @@ struct BenchmarkingView<G: GenerableView>: View {
     } label: {
       Label("生成（單次）", systemImage: "1.circle")
     }
-    .buttonStyle(.glass)
+    .disabled(generator.isResponding)
   }
 
   @ViewBuilder
@@ -140,7 +154,15 @@ struct BenchmarkingView<G: GenerableView>: View {
     } label: {
       Label("生成（串流）", systemImage: "water.waves")
     }
-    .buttonStyle(.glass)
+    .disabled(generator.isResponding)
+  }
+
+  @ViewBuilder
+  private var prewarmToggle: some View {
+    Toggle(isOn: $prewarm) {
+      Label("Prewarm", systemImage: "flame.fill")
+    }
+    .disabled(generator.isResponding)
   }
 
   @ViewBuilder
@@ -148,25 +170,22 @@ struct BenchmarkingView<G: GenerableView>: View {
     if generator.isResponding {
       ProgressView()
     } else {
-      VStack {
-        oneShotButton
-        streamButton
-        Toggle("Prewarm", isOn: $prewarm)
-      }
+      prewarmToggle
+      oneShotButton
+      streamButton
     }
   }
 
   @ViewBuilder
   private var list: some View {
-    List {
-      ForEach(generator.response) { item in
-        item
-      }
+    ForEach(generator.response) { item in
+      item
     }
   }
 }
 
-protocol GenerableView: Generable where PartiallyGenerated: View & Identifiable {
+protocol GenerableView: Generable
+where PartiallyGenerated: View & Identifiable {
   associatedtype PartiallyGenerated
 }
 
