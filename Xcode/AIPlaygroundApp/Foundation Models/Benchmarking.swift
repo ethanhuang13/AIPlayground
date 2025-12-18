@@ -2,7 +2,10 @@ import FoundationModels
 import OSLog
 import SwiftUI
 
-private let logger = Logger(subsystem: "Foundation Models AIPlayground", category: "Benchmarking")
+private let logger = Logger(
+  subsystem: "Foundation Models AIPlayground",
+  category: "Benchmarking"
+)
 
 @Observable
 @MainActor
@@ -69,8 +72,7 @@ class BenchmarkingGenerator<G: Generable> {
       }
 
       self.endDate = Date()
-      logger
-        .log("End streaming in \(self.totalDuration)")
+      logger.log("Finish streaming in \(self.totalDuration)")
     } else {
       self.response =
         try await session
@@ -83,7 +85,7 @@ class BenchmarkingGenerator<G: Generable> {
         .asPartiallyGenerated()
 
       self.endDate = Date()
-      logger.log("End one-shot in \(self.totalDuration)")
+      logger.log("Finish one-shot in \(self.totalDuration)")
     }
   }
 }
@@ -117,49 +119,26 @@ struct BenchmarkingView<G: GenerableView>: View {
     NavigationStack {
       List {
         Section {
-          Label(
-            title: { Text(instructions) },
-            icon: { Image(systemName: "location.north.fill") }
-          )
-          Label(
-            title: { Text(prompt) },
-            icon: { Image(systemName: "hand.point.right") }
-          )
-
+          instructionsView
+          promptView
           if generator.firstResponseDuration > 0 {
-            Label(
-              title: {
-                Text(
-                  "First response: \(generator.firstResponseDuration, format: .number.precision(.fractionLength(3))) seconds"
-                )
-              },
-              icon: {
-                Image(systemName: "textformat.superscript")
-              }
-            )
+            firstResponseDurationView
           }
-
           if generator.totalDuration > 0 {
-            Label(
-              title: {
-                Text(
-                  "Total time: \(generator.totalDuration, format: .number.precision(.fractionLength(3))) seconds"
-                )
-              },
-              icon: {
-                Image(systemName: "textformat.characters.arrow.left.and.right")
-              }
-            )
+            totalDurationView
           }
-
-          resetButton
+          if generator.response.isEmpty == false
+            && generator.isResponding == false
+          {
+            resetButton
+          }
         }
 
         Section {
           if generator.response.isEmpty {
             noContentView
           } else {
-            list
+            generatedContentView
           }
         }
       }
@@ -170,62 +149,56 @@ struct BenchmarkingView<G: GenerableView>: View {
   }
 
   @ViewBuilder
+  private var instructionsView: some View {
+    Label(
+      title: { Text(instructions) },
+      icon: { Image(systemName: "location.north.fill") }
+    )
+  }
+
+  @ViewBuilder
+  private var promptView: some View {
+    Label(
+      title: { Text(prompt) },
+      icon: { Image(systemName: "hand.point.right") }
+    )
+  }
+
+  @ViewBuilder
+  private var firstResponseDurationView: some View {
+    Label(
+      title: {
+        Text(
+          "First response: \(generator.firstResponseDuration, format: .number.precision(.fractionLength(3))) seconds"
+        )
+      },
+      icon: {
+        Image(systemName: "textformat.superscript")
+      }
+    )
+  }
+
+  @ViewBuilder
+  private var totalDurationView: some View {
+    Label(
+      title: {
+        Text(
+          "Total time: \(generator.totalDuration, format: .number.precision(.fractionLength(3))) seconds"
+        )
+      },
+      icon: {
+        Image(systemName: "textformat.characters.arrow.left.and.right")
+      }
+    )
+  }
+
+  @ViewBuilder
   private var resetButton: some View {
-    if generator.response.isEmpty == false && generator.isResponding == false {
-      Button {
-        resetGenerator()
-      } label: {
-        Label("Reset", systemImage: "arrow.clockwise")
-      }
-    }
-  }
-
-  @ViewBuilder
-  private var oneShotButton: some View {
     Button {
-      Task {
-        do {
-          try await generator.generate(
-            to: Prompt { prompt },
-            streaming: false
-          )
-        } catch {
-          logger.error("\(error)")
-          // TODO: 顯示錯誤訊息在 UI
-        }
-      }
+      resetGenerator()
     } label: {
-      Label("生成（單次）", systemImage: "1.circle")
+      Label("Reset", systemImage: "arrow.clockwise")
     }
-    .disabled(generator.isResponding)
-  }
-
-  @ViewBuilder
-  private var streamButton: some View {
-    Button {
-      Task {
-        do {
-          try await generator.generate(
-            to: Prompt { prompt },
-            streaming: true
-          )
-        } catch {
-          logger.error("\(error)")
-          // TODO: 顯示錯誤訊息在 UI
-        }
-      }
-    } label: {
-      Label("生成（串流）", systemImage: "water.waves")
-    }
-    .disabled(generator.isResponding)
-  }
-
-  @ViewBuilder
-  private var prewarmToggle: some View {
-    Toggle(isOn: $shouldPrewarm) {
-      Label("Prewarm", systemImage: "flame.fill")
-    }
-    .disabled(generator.isResponding)
   }
 
   @ViewBuilder
@@ -241,7 +214,55 @@ struct BenchmarkingView<G: GenerableView>: View {
   }
 
   @ViewBuilder
-  private var list: some View {
+  private var prewarmToggle: some View {
+    Toggle(isOn: $shouldPrewarm) {
+      Label("Prewarm", systemImage: "flame.fill")
+    }
+    .disabled(generator.isResponding)
+  }
+
+  @ViewBuilder
+  private var oneShotButton: some View {
+    Button {
+      Task {
+        do {
+          try await generator.generate(
+            to: Prompt { prompt },
+            streaming: false
+          )
+        } catch {
+          logger.error("\(error)")
+          // TODO: Show error messages on UI
+        }
+      }
+    } label: {
+      Label("One-shot", systemImage: "1.circle")
+    }
+    .disabled(generator.isResponding)
+  }
+
+  @ViewBuilder
+  private var streamButton: some View {
+    Button {
+      Task {
+        do {
+          try await generator.generate(
+            to: Prompt { prompt },
+            streaming: true
+          )
+        } catch {
+          logger.error("\(error)")
+          // TODO: Show error messages on UI
+        }
+      }
+    } label: {
+      Label("Stream Response", systemImage: "water.waves")
+    }
+    .disabled(generator.isResponding)
+  }
+
+  @ViewBuilder
+  private var generatedContentView: some View {
     ForEach(generator.response) { item in
       item
     }
@@ -285,7 +306,13 @@ extension CatProfile.PartiallyGenerated: View {
   )
 }
 
-/* TODO or Nice to Have:
- - Task cancellation
- - Preserve transcript and metric
- */
+#Preview {
+  BenchmarkingView<CatProfilePro>(
+    instructions: """
+      User locale: zh-Hant-tw
+      這是一款養貓模擬遊戲。提供 5 隻貓作為一開始的建議選項
+      """,
+    prompt: "我不喜歡太黏人的貓",
+    shouldPrewarm: true
+  )
+}
