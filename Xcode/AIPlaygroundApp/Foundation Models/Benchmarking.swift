@@ -232,6 +232,7 @@ struct BenchmarkingView<G: GenerableView>: View {
   private var noContentView: some View {
     if generator.isResponding {
       ProgressView()
+        .progressViewStyle(.circular)
     } else {
       prewarmToggle
       oneShotButton
