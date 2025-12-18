@@ -2,25 +2,26 @@ import FoundationModels
 import OSLog
 import SwiftUI
 
+private let logger = Logger(subsystem: "Benchmarking", category: "")
+
 @Observable
 @MainActor
 class BenchmarkingGenerator<G: Generable> {
   private(set) var response: [G.PartiallyGenerated] = []
   private var session: LanguageModelSession
-  private var prewarmed: Bool
-  private let logger = Logger(subsystem: "Benchmarking", category: "Generator")
+  private var shouldPrewarm: Bool
 
   var beginDate: Date = .distantPast
-  var firstTokenDate: Date = .distantPast
+  var firstResponseDate: Date = .distantPast
   var endDate: Date = .distantPast
 
   var isResponding: Bool {
     session.isResponding
   }
 
-  var firstTokenDuration: TimeInterval {
-    guard firstTokenDate > beginDate else { return 0 }
-    return firstTokenDate.timeIntervalSince(beginDate)
+  var firstResponseDuration: TimeInterval {
+    guard firstResponseDate > beginDate else { return 0 }
+    return firstResponseDate.timeIntervalSince(beginDate)
   }
 
   var totalDuration: TimeInterval {
@@ -28,14 +29,14 @@ class BenchmarkingGenerator<G: Generable> {
     return endDate.timeIntervalSince(beginDate)
   }
 
-  init(instructions: String, prewarm: Bool) {
+  init(instructions: String, shouldPrewarm: Bool) {
     session = LanguageModelSession(
       model: SystemLanguageModel.default,
       instructions: instructions
     )
 
-    self.prewarmed = prewarm
-    if prewarm {
+    self.shouldPrewarm = shouldPrewarm
+    if shouldPrewarm {
       session.prewarm()
     }
 
@@ -46,7 +47,7 @@ class BenchmarkingGenerator<G: Generable> {
     self.beginDate = Date()
 
     logger.log(
-      "Begin \(streaming ? "streaming" : "one-shot") \((self.prewarmed ? "prewarmed" : "without prewarm"))"
+      "Begin \(streaming ? "streaming" : "one-shot") \((self.shouldPrewarm ? "prewarmed" : "without prewarm"))"
     )
 
     if streaming {
@@ -60,8 +61,8 @@ class BenchmarkingGenerator<G: Generable> {
       for try await partialResponse in stream {
         if isFirstResponse {
           isFirstResponse = false
-          self.firstTokenDate = Date()
-          logger.log("First token in \(self.firstTokenDuration)")
+          self.firstResponseDate = Date()
+          logger.log("First response in \(self.firstResponseDuration)")
         }
 
         self.response = partialResponse.content
@@ -91,16 +92,16 @@ struct BenchmarkingView<G: GenerableView>: View {
   private let instructions: String
   private let prompt: String
   @State private var generator: BenchmarkingGenerator<G>
-  @State private var prewarm: Bool = false
+  @State private var shouldPrewarm: Bool = false
 
-  init(instructions: String, prompt: String, prewarm: Bool) {
+  init(instructions: String, prompt: String, shouldPrewarm: Bool) {
     self.instructions = instructions
     self.prompt = prompt
-    _prewarm = State(initialValue: prewarm)
+    _shouldPrewarm = State(initialValue: shouldPrewarm)
     _generator = State(
       initialValue: BenchmarkingGenerator(
         instructions: instructions,
-        prewarm: prewarm
+        shouldPrewarm: shouldPrewarm
       )
     )
   }
@@ -108,7 +109,7 @@ struct BenchmarkingView<G: GenerableView>: View {
   func resetGenerator() {
     self.generator = BenchmarkingGenerator(
       instructions: instructions,
-      prewarm: prewarm
+      shouldPrewarm: shouldPrewarm
     )
   }
 
@@ -125,10 +126,12 @@ struct BenchmarkingView<G: GenerableView>: View {
             icon: { Image(systemName: "hand.point.right") }
           )
 
-          if generator.firstTokenDuration > 0 {
+          if generator.firstResponseDuration > 0 {
             Label(
               title: {
-                Text("First token: \(generator.firstTokenDuration) seconds")
+                Text(
+                  "First response: \(generator.firstResponseDuration, format: .number.precision(.fractionLength(3))) seconds"
+                )
               },
               icon: {
                 Image(systemName: "textformat.superscript")
@@ -139,13 +142,15 @@ struct BenchmarkingView<G: GenerableView>: View {
           if generator.totalDuration > 0 {
             Label(
               title: {
-                Text("Total time: \(generator.totalDuration) seconds")
+                Text("Total time: \(generator.totalDuration, format: .number.precision(.fractionLength(3))) seconds")
               },
               icon: {
                 Image(systemName: "textformat.characters.arrow.left.and.right")
               }
             )
           }
+
+          resetButton
         }
 
         Section {
@@ -156,15 +161,7 @@ struct BenchmarkingView<G: GenerableView>: View {
           }
         }
       }
-      .toolbar {
-        ToolbarItemGroup(placement: .automatic) {
-          resetButton
-          oneShotButton
-          streamButton
-          prewarmToggle
-        }
-      }
-      .onChange(of: prewarm) { _, _ in
+      .onChange(of: shouldPrewarm) { _, _ in
         resetGenerator()
       }
     }
@@ -176,7 +173,7 @@ struct BenchmarkingView<G: GenerableView>: View {
       Button {
         resetGenerator()
       } label: {
-        Image(systemName: "arrow.clockwise")
+        Label("Reset", systemImage: "arrow.clockwise")
       }
     }
   }
@@ -187,11 +184,15 @@ struct BenchmarkingView<G: GenerableView>: View {
       resetGenerator()
 
       Task {
-        try await generator.generate(
-          to: Prompt { prompt },
-          streaming: false
-        )
-        // TODO: 應增加 error handling 與錯誤提示
+        do {
+          try await generator.generate(
+            to: Prompt { prompt },
+            streaming: false
+          )
+        } catch {
+          logger.error("\(error)")
+          // TODO: 顯示錯誤訊息在 UI
+        }
       }
     } label: {
       Label("生成（單次）", systemImage: "1.circle")
@@ -205,11 +206,15 @@ struct BenchmarkingView<G: GenerableView>: View {
       resetGenerator()
 
       Task {
-        try await generator.generate(
-          to: Prompt { prompt },
-          streaming: true
-        )
-        // TODO: 應增加 error handling 與錯誤提示
+        do {
+          try await generator.generate(
+            to: Prompt { prompt },
+            streaming: true
+          )
+        } catch {
+          logger.error("\(error)")
+          // TODO: 顯示錯誤訊息在 UI
+        }
       }
     } label: {
       Label("生成（串流）", systemImage: "water.waves")
@@ -219,7 +224,7 @@ struct BenchmarkingView<G: GenerableView>: View {
 
   @ViewBuilder
   private var prewarmToggle: some View {
-    Toggle(isOn: $prewarm) {
+    Toggle(isOn: $shouldPrewarm) {
       Label("Prewarm", systemImage: "flame.fill")
     }
     .disabled(generator.isResponding)
@@ -277,6 +282,6 @@ extension CatProfile.PartiallyGenerated: View {
       這是一款養貓模擬遊戲。提供 5 隻貓作為一開始的建議選項
       """,
     prompt: "我不喜歡太黏人的貓",
-    prewarm: true
+    shouldPrewarm: true
   )
 }
