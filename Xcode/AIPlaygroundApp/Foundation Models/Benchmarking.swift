@@ -183,8 +183,6 @@ struct BenchmarkingView<G: GenerableView>: View {
   @ViewBuilder
   private var oneShotButton: some View {
     Button {
-      resetGenerator()
-
       Task {
         do {
           try await generator.generate(
@@ -205,8 +203,6 @@ struct BenchmarkingView<G: GenerableView>: View {
   @ViewBuilder
   private var streamButton: some View {
     Button {
-      resetGenerator()
-
       Task {
         do {
           try await generator.generate(
