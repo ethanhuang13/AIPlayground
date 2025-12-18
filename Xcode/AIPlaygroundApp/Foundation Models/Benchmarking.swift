@@ -10,8 +10,22 @@ class BenchmarkingGenerator<G: Generable> {
   private var prewarmed: Bool
   private let logger = Logger(subsystem: "Benchmarking", category: "Generator")
 
+  var beginDate: Date = .distantPast
+  var firstTokenDate: Date = .distantPast
+  var endDate: Date = .distantPast
+
   var isResponding: Bool {
     session.isResponding
+  }
+
+  var firstTokenDuration: TimeInterval {
+    guard firstTokenDate > beginDate else { return 0 }
+    return firstTokenDate.timeIntervalSince(beginDate)
+  }
+
+  var totalDuration: TimeInterval {
+    guard endDate > beginDate else { return 0 }
+    return endDate.timeIntervalSince(beginDate)
   }
 
   init(instructions: String, prewarm: Bool) {
@@ -29,7 +43,8 @@ class BenchmarkingGenerator<G: Generable> {
   }
 
   func generate(to prompt: Prompt, streaming: Bool) async throws {
-    let begin = Date()
+    self.beginDate = Date()
+
     logger.log(
       "Begin \(streaming ? "streaming" : "one-shot") \((self.prewarmed ? "prewarmed" : "without prewarm"))"
     )
@@ -43,13 +58,16 @@ class BenchmarkingGenerator<G: Generable> {
 
       for try await partialResponse in stream {
         if self.response.isEmpty {
-          logger.log("First token in \(Date().timeIntervalSince(begin))")
+          self.firstTokenDate = Date()
+          logger.log("First token in \(self.firstTokenDuration)")
         }
 
         self.response = partialResponse.content
       }
 
-      logger.log("End streaming in \(Date().timeIntervalSince(begin))")
+      self.endDate = Date()
+      logger
+        .log("End streaming in \(self.totalDuration)")
     } else {
       self.response =
         try await session
@@ -61,18 +79,19 @@ class BenchmarkingGenerator<G: Generable> {
         .content
         .asPartiallyGenerated()
 
-      logger.log("End one-shot in \(Date().timeIntervalSince(begin))")
+      self.endDate = Date()
+      logger.log("End one-shot in \(self.totalDuration)")
     }
   }
 }
 
 struct BenchmarkingView<G: GenerableView>: View {
   private let instructions: String
-  private let prompt: Prompt
+  private let prompt: String
   @State private var generator: BenchmarkingGenerator<G>
   @State private var prewarm: Bool = false
 
-  init(instructions: String, prompt: Prompt, prewarm: Bool) {
+  init(instructions: String, prompt: String, prewarm: Bool) {
     self.instructions = instructions
     self.prompt = prompt
     self.prewarm = prewarm
@@ -92,10 +111,45 @@ struct BenchmarkingView<G: GenerableView>: View {
   var body: some View {
     NavigationStack {
       List {
-        if generator.response.isEmpty {
-          noContentView
-        } else {
-          list
+        Section {
+          Label(
+            title: { Text(instructions) },
+            icon: { Image(systemName: "location.north.fill") }
+          )
+          Label(
+            title: { Text(prompt) },
+            icon: { Image(systemName: "hand.point.right") }
+          )
+
+          if generator.firstTokenDuration > 0 {
+            Label(
+              title: {
+                Text("First token: \(generator.firstTokenDuration) seconds")
+              },
+              icon: {
+                Image(systemName: "textformat.superscript")
+              }
+            )
+          }
+
+          if generator.totalDuration > 0 {
+            Label(
+              title: {
+                Text("Total time: \(generator.totalDuration) seconds")
+              },
+              icon: {
+                Image(systemName: "textformat.characters.arrow.left.and.right")
+              }
+            )
+          }
+        }
+
+        Section {
+          if generator.response.isEmpty {
+            noContentView
+          } else {
+            list
+          }
         }
       }
       .toolbar {
@@ -130,7 +184,7 @@ struct BenchmarkingView<G: GenerableView>: View {
 
       Task {
         try await generator.generate(
-          to: prompt,
+          to: Prompt { prompt },
           streaming: false
         )
       }
@@ -147,7 +201,7 @@ struct BenchmarkingView<G: GenerableView>: View {
 
       Task {
         try await generator.generate(
-          to: prompt,
+          to: Prompt { prompt },
           streaming: true
         )
       }
@@ -185,9 +239,7 @@ struct BenchmarkingView<G: GenerableView>: View {
 }
 
 protocol GenerableView: Generable
-where PartiallyGenerated: View & Identifiable {
-  associatedtype PartiallyGenerated
-}
+where PartiallyGenerated: View & Identifiable {}
 
 extension CatProfile: GenerableView {}
 extension CatProfile.PartiallyGenerated: View {
@@ -218,7 +270,7 @@ extension CatProfile.PartiallyGenerated: View {
       User locale: zh-Hant-tw
       這是一款養貓模擬遊戲。提供 5 隻貓作為一開始的建議選項
       """,
-    prompt: Prompt { "我不喜歡太黏人的貓" },
+    prompt: "我不喜歡太黏人的貓",
     prewarm: true
   )
 }
