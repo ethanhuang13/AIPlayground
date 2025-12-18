@@ -2,7 +2,7 @@ import FoundationModels
 import OSLog
 import SwiftUI
 
-private let logger = Logger(subsystem: "Benchmarking", category: "")
+private let logger = Logger(subsystem: "Foundation Models AIPlayground", category: "Benchmarking")
 
 @Observable
 @MainActor
@@ -142,7 +142,9 @@ struct BenchmarkingView<G: GenerableView>: View {
           if generator.totalDuration > 0 {
             Label(
               title: {
-                Text("Total time: \(generator.totalDuration, format: .number.precision(.fractionLength(3))) seconds")
+                Text(
+                  "Total time: \(generator.totalDuration, format: .number.precision(.fractionLength(3))) seconds"
+                )
               },
               icon: {
                 Image(systemName: "textformat.characters.arrow.left.and.right")
@@ -285,3 +287,8 @@ extension CatProfile.PartiallyGenerated: View {
     shouldPrewarm: true
   )
 }
+
+/* TODO or Nice to Have:
+ - Task cancellation
+ - Preserve transcript and metric
+ */
