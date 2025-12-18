@@ -137,7 +137,7 @@ struct BenchmarkingView<G: GenerableView>: View {
         }
 
         Section {
-          if let generatedContentView = generator.response?.body {
+          if let generatedContentView = generator.response {
             generatedContentView
           } else {
             noContentView
