@@ -1,5 +1,12 @@
 import FoundationModels
 
+@Generable
+struct WeatherCondition {
+  var temperature: Double
+  var chanceOfRain: Double
+  var humidity: Double
+}
+
 struct WeatherConditionTool: Tool {
   let name = "weatherCondition"
   let description = "Get current weather conditions for a location"

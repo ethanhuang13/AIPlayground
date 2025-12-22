@@ -8,17 +8,25 @@ let osVersion = "26.1"
 
 // MARK: - Third party dependencies
 
-let anyLanguageModel = Package.Dependency.package(
-  url: "https://github.com/mattt/AnyLanguageModel",
-  exact: "0.5.2"
+let anyLanguageModel = SourceControlDependency(
+  package: .package(
+    url: "https://github.com/mattt/AnyLanguageModel",
+    exact: "0.5.2"
+  ),
+  productName: "AnyLanguageModel"
 )
 
 // MARK: - Modules. Ordered by dependency hierarchy.
 
+let foundationModelsUI = SingleTargetLibrary(
+  name: "FoundationModelsUI"
+)
+
 let app = SingleTargetLibrary(
   name: "AIPlayground",
   dependencies: [
-//    anyLanguageModel.product
+    foundationModelsUI.targetDependency,
+//    anyLanguageModel.targetDependency,
   ]
 )
 
@@ -26,12 +34,14 @@ let package = Package(
   name: "AIPlayground",
   platforms: [.macOS(osVersion), .iOS(osVersion)],
   products: [
-    app.product
+    foundationModelsUI.product,
+    app.product,
   ],
   dependencies: [
-//    anyLanguageModel.package
+    //    anyLanguageModel.package
   ],
   targets: [
+    foundationModelsUI.target,
     app.target
   ]
 )

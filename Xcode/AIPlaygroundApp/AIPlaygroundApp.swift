@@ -1,4 +1,5 @@
 import FoundationModels
+import FoundationModelsUI
 import SwiftUI
 
 @main
