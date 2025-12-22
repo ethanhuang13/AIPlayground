@@ -1,8 +1,8 @@
 # AIPlayground
 
-這是一個搭配 [13+ 專欄](https://ethanhuang13.plus/) 2025 年 12 月連載專題[本地 AI 體驗](https://ethanhuang13.plus/tag/local-ai/)的示範專案。
+這是一個搭配 [13+ 專欄](https://ethanhuang13.plus/) 2025 年 12 月連載專題「[**📲 本地 AI**](https://ethanhuang13.plus/tag/local-ai/)」的示範專案。
 
-若你對上手 Foundation Models framework 或是學習 iOS 開發有興趣，歡迎參考 [13+ 專欄](https://ethanhuang13.plus/)。 
+若你對上手 Foundation Models framework 或是學習 iOS 開發進階主題有興趣，歡迎加入 [13+ 專欄](https://ethanhuang13.plus/)。 
 
 ## 需求
 
@@ -14,7 +14,9 @@
 
 讀者可以參考此專案建立自己的 Foundation Models framework 研究專案。
 
-此專案根目錄就是一個 `AIPlayground` Swift Package。其中 `AIPlayground` library 的 `Foundation Models #Playground` 與 `Foundation Models #Preview` 資料夾有數個範例。
+此專案本身就是一個 `AIPlayground` Swift Package。
+
+其中，`AIPlayground` library 的 `Foundation Models #Playground` 與 `Foundation Models #Preview` 資料夾有數個範例。
 
 ## 使用 FoundationModelsUI library
 
