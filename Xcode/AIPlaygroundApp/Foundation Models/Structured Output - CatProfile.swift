@@ -33,6 +33,7 @@ enum CatPersonality: String {
     這是一款養貓模擬遊戲。提供 5 隻貓作為一開始的建議選項
     """
   let session = LanguageModelSession(
+    model: SystemLanguageModel.default,
     instructions: instructions
   )
 

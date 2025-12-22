@@ -34,6 +34,7 @@ private struct CalculationTool: Tool {
 
 #Playground {
   let session = LanguageModelSession(
+    model: SystemLanguageModel.default,
     tools: [CalculationTool()],  // 語言模型不擅長數學運算，最好使用可驗證正確性的外部工具進行計算
     instructions: "呼叫工具，進行基本的四則運算"
   )
