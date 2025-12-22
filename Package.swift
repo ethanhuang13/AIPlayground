@@ -19,14 +19,17 @@ let anyLanguageModel = SourceControlDependency(
 // MARK: - Modules. Ordered by dependency hierarchy.
 
 let foundationModelsUI = SingleTargetLibrary(
-  name: "FoundationModelsUI"
+  name: "FoundationModelsUI",
+  dependencies: [
+    //    anyLanguageModel.targetDependency,
+  ]
 )
 
 let app = SingleTargetLibrary(
   name: "AIPlayground",
   dependencies: [
-    foundationModelsUI.targetDependency,
-//    anyLanguageModel.targetDependency,
+    foundationModelsUI.targetDependency
+      //    anyLanguageModel.targetDependency,
   ]
 )
 
@@ -42,7 +45,7 @@ let package = Package(
   ],
   targets: [
     foundationModelsUI.target,
-    app.target
+    app.target,
   ]
 )
 
