@@ -1,7 +1,7 @@
 import FoundationModels
 import Playgrounds
 
-#Playground("Prompt Builder") {
+#Playground("Generate Cat Profiles") {
   let instructions = """
     User locale: zh-Hant-tw
     這是一款養貓模擬遊戲。提供 5 隻貓作為一開始的建議選項
@@ -11,24 +11,10 @@ import Playgrounds
     instructions: instructions
   )
 
-  let previousCat: CatProfile? = CatProfile(
-    name: "阿喵",
-    age: 10,
-    personality: .lazy,
-    expertise: "睡覺"
-  )
-
-  let prompt = Prompt {
-    "我不喜歡太黏人的貓。"
-    if let previousCat {
-      "以下是使用者之前的貓，首先建議相同的性格與專長，但是換個名字與較小的年齡："
-      previousCat
-    }
-  }
-
   let response = try await session.respond(
-    to: prompt,
+    to: "我不喜歡太黏人的貓",  // user input
     generating: [CatProfile].self,
     options: GenerationOptions(sampling: .greedy)
   )
+  print(response)
 }

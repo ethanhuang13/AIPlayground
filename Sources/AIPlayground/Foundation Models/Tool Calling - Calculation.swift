@@ -41,4 +41,5 @@ private struct CalculationTool: Tool {
   let response = try await session.respond(to: "11 加 12，再減 13")
   print(response.content)  // "11 加 12 再減 13 的結果為 10。"
   let transcript = session.transcript  // 顯示 session 呼叫過程
+  print(transcript)
 }

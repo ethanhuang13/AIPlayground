@@ -8,63 +8,17 @@ let osVersion = "26.1"
 
 // MARK: - Third party dependencies
 
-let swiftDependencies = Package.Dependency.package(
-  url: "https://github.com/pointfreeco/swift-dependencies",
-  from: "1.10.0"
-)
-let dependencies = SourceControlDependency(
-  package: swiftDependencies,
-  productName: "Dependencies"
-)
-let dependenciesMacros = SourceControlDependency(
-  package: swiftDependencies,
-  productName: "DependenciesMacros"
+let anyLanguageModel = Package.Dependency.package(
+  url: "https://github.com/mattt/AnyLanguageModel",
+  exact: "0.5.2"
 )
 
 // MARK: - Modules. Ordered by dependency hierarchy.
 
-let models = SingleTargetLibrary(
-  name: "Models",
-  dependencies: [
-    dependencies.targetDependency
-  ]
-)
-let dependencyClients = SingleTargetLibrary(
-  name: "DependencyClients",
-  dependencies: [
-    dependencies.targetDependency,
-    dependenciesMacros.targetDependency,
-    models.targetDependency,
-  ]
-)
-let features = SingleTargetLibrary(
-  name: "Features",
-  dependencies: [
-    models.targetDependency,
-    dependencyClients.targetDependency,
-  ]
-)
-let views = SingleTargetLibrary(
-  name: "Views",
-  dependencies: [
-    models.targetDependency,
-    features.targetDependency,
-  ]
-)
-let dependencyClientsLive = SingleTargetLibrary(
-  name: "DependencyClientsLive",
-  dependencies: [
-    dependencies.targetDependency,
-    dependenciesMacros.targetDependency,
-    dependencyClients.targetDependency,
-  ]
-)
 let app = SingleTargetLibrary(
   name: "AIPlayground",
   dependencies: [
-    features.targetDependency,
-    views.targetDependency,
-    dependencyClientsLive.targetDependency,
+//    anyLanguageModel.product
   ]
 )
 
@@ -72,26 +26,13 @@ let package = Package(
   name: "AIPlayground",
   platforms: [.macOS(osVersion), .iOS(osVersion)],
   products: [
-    dependencyClients.product,
-    dependencyClientsLive.product,
-    features.product,
-    models.product,
-    app.product,
-    views.product,
+    app.product
   ],
   dependencies: [
-    swiftDependencies
+//    anyLanguageModel.package
   ],
   targets: [
-    models.target,
-    models.testTarget,
-    dependencyClients.target,
-    dependencyClientsLive.target,
-    features.target,
-    features.testTarget,
-    views.target,
-    views.testTarget,
-    app.target,
+    app.target
   ]
 )
 

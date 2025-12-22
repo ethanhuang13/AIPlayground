@@ -307,8 +307,8 @@ struct CatProfiles: GenerableView {
 extension CatProfiles.PartiallyGenerated: View {
   var body: some View {
     if let catProfiles {
-      ForEach(catProfiles) { catProfile in
-        catProfile
+      ForEach(catProfiles) {
+        catProfile in catProfile
       }
     }
   }

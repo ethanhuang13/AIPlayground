@@ -27,4 +27,5 @@ private let prompt = "學習 Swift 程式語言的策略？"
     generating: [Step].self,
     options: GenerationOptions(sampling: .greedy)
   )
+  print(response)
 }

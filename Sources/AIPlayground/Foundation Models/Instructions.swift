@@ -7,6 +7,7 @@ private let prompt = "學習 Swift 程式語言的策略？"
   let session = LanguageModelSession(model: SystemLanguageModel.default)
 
   let response = try await session.respond(to: prompt)
+  print(response)
 }
 
 #Playground("Instructions") {
@@ -19,4 +20,5 @@ private let prompt = "學習 Swift 程式語言的策略？"
   )
 
   let response = try await session.respond(to: prompt)
+  print(response)
 }
