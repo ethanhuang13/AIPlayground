@@ -1,4 +1,8 @@
-import FoundationModels
+#if AnyLanguageModel
+  import AnyLanguageModel
+#else
+  import FoundationModels
+#endif
 
 @Generable(description: "貓的性格")
 enum CatPersonality: String {

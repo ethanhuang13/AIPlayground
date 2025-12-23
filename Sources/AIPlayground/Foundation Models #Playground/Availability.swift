@@ -1,8 +1,13 @@
 // Modified from https://developer.apple.com/events/resources/code-along-205/
 // 1.3: Handling model availability
 
-import FoundationModels
 import Playgrounds
+
+#if AnyLanguageModel
+  import AnyLanguageModel
+#else
+  import FoundationModels
+#endif
 
 #Playground("availability") {
   let model = SystemLanguageModel.default

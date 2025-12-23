@@ -1,4 +1,8 @@
-import FoundationModels
+#if AnyLanguageModel
+  import AnyLanguageModel
+#else
+  import FoundationModels
+#endif
 
 @Generable(description: "貓的基本資料")
 struct CatProfile {

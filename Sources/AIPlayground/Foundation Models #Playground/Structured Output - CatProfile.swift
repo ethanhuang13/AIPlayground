@@ -1,5 +1,10 @@
-import FoundationModels
 import Playgrounds
+
+#if AnyLanguageModel
+  import AnyLanguageModel
+#else
+  import FoundationModels
+#endif
 
 #Playground("Generate Cat Profiles") {
   let instructions = """

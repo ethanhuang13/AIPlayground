@@ -1,4 +1,8 @@
-import FoundationModels
+#if AnyLanguageModel
+  import AnyLanguageModel
+#else
+  import FoundationModels
+#endif
 
 struct CalculationTool: Tool {
   let name = "arithmeticCalculator"

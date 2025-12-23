@@ -1,5 +1,10 @@
-import FoundationModels
 import Playgrounds
+
+#if AnyLanguageModel
+  import AnyLanguageModel
+#else
+  import FoundationModels
+#endif
 
 @Generable
 private struct Step {

@@ -1,6 +1,11 @@
-import FoundationModels
 import OSLog
 import SwiftUI
+
+#if AnyLanguageModel
+  import AnyLanguageModel
+#else
+  import FoundationModels
+#endif
 
 private let logger = Logger(
   subsystem: "FoundationModelsUI",

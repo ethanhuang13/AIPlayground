@@ -1,5 +1,10 @@
-import FoundationModels
 import SwiftUI
+
+#if AnyLanguageModel
+  import AnyLanguageModel
+#else
+  import FoundationModels
+#endif
 
 @Observable
 @MainActor

@@ -1,5 +1,10 @@
-import FoundationModels
 import Playgrounds
+
+#if AnyLanguageModel
+  import AnyLanguageModel
+#else
+  import FoundationModels
+#endif
 
 private let prompt = "學習 Swift 程式語言的策略？"
 

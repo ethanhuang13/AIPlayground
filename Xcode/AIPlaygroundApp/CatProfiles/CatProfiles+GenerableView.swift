@@ -1,6 +1,11 @@
-import FoundationModels
 import FoundationModelsUI
 import SwiftUI
+
+#if AnyLanguageModel
+  import AnyLanguageModel
+#else
+  import FoundationModels
+#endif
 
 @Generable
 struct CatProfiles {

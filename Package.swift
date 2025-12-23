@@ -5,13 +5,14 @@ import Foundation
 import PackageDescription
 
 let osVersion = "26.1"
+let anyLanguageModelTrait = "AnyLanguageModel"
 
 // MARK: - Third party dependencies
 
 let anyLanguageModel = SourceControlDependency(
   package: .package(
-    url: "https://github.com/mattt/AnyLanguageModel",
-    exact: "0.5.2"
+    url: "https://github.com/ethanhuang13/AnyLanguageModel",
+    branch: "add-identifiable-conformance"  // Commit: 9dfb06f0449cae1d67a8205ec99b11f73434cff8
   ),
   productName: "AnyLanguageModel"
 )
@@ -21,15 +22,15 @@ let anyLanguageModel = SourceControlDependency(
 let foundationModelsUI = SingleTargetLibrary(
   name: "FoundationModelsUI",
   dependencies: [
-    //    anyLanguageModel.targetDependency,
+    anyLanguageModel.targetDependency(traits: [anyLanguageModelTrait])
   ]
 )
 
 let app = SingleTargetLibrary(
   name: "AIPlayground",
   dependencies: [
-    foundationModelsUI.targetDependency
-      //    anyLanguageModel.targetDependency,
+    foundationModelsUI.targetDependency,
+    anyLanguageModel.targetDependency(traits: [anyLanguageModelTrait]),
   ]
 )
 
@@ -40,8 +41,12 @@ let package = Package(
     foundationModelsUI.product,
     app.product,
   ],
+  traits: [
+    .trait(name: anyLanguageModelTrait),
+    .default(enabledTraits: []),  // Add `anyLanguageModelTrait` to enable using AnyLanguageModel package. Noted that you may need to restart Xcode and clean the project after changing enabledTraits
+  ],
   dependencies: [
-    //    anyLanguageModel.package
+    anyLanguageModel.package
   ],
   targets: [
     foundationModelsUI.target,
@@ -62,6 +67,10 @@ struct SourceControlDependency {
   }
 
   var targetDependency: Target.Dependency {
+    self.targetDependency()
+  }
+
+  func targetDependency(traits: Set<String> = []) -> Target.Dependency {
     var packageName: String
 
     switch package.kind {
@@ -83,7 +92,7 @@ struct SourceControlDependency {
       name: productName,
       package: packageName,
       moduleAliases: nil,
-      condition: nil
+      condition: .when(traits: traits)
     )
   }
 }
