@@ -6,6 +6,20 @@ import Playgrounds
   import FoundationModels
 #endif
 
+// XXX: Put at outside of #Playground as a workaround of
+// AnyLanguageModel's @Generable macro issue
+// Memberwise initializer not recognized in #Playground
+// https://github.com/mattt/AnyLanguageModel/issues/74
+private let previousCat: CatProfile? = CatProfile(
+  name: "阿喵",
+  age: 10,
+  personality: CatPersonality.lazy,
+  expertise: "睡覺"
+)
+
+// XXX: AnyLanguageModel's @Generable macro is missing auto conformance of PromptRepresentable
+extension CatProfile: PromptRepresentable {}
+
 #Playground("Prompt Builder") {
   let instructions = """
     User locale: zh-Hant-tw
@@ -14,13 +28,6 @@ import Playgrounds
   let session = LanguageModelSession(
     model: SystemLanguageModel.default,
     instructions: instructions
-  )
-
-  let previousCat: CatProfile? = CatProfile(
-    name: "阿喵",
-    age: 10,
-    personality: CatPersonality.lazy,
-    expertise: "睡覺"
   )
 
   let prompt = Prompt {
