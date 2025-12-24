@@ -37,9 +37,13 @@ public class BenchmarkingGenerator<G: Generable> {
     return endDate.timeIntervalSince(beginDate)
   }
 
-  public init(instructions: String, shouldPrewarm: Bool) {
+  public init(
+    model: any LanguageModel,
+    instructions: String,
+    shouldPrewarm: Bool
+  ) {
     session = LanguageModelSession(
-      model: SystemLanguageModel.default,
+      model: model,
       instructions: instructions
     )
 

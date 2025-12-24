@@ -13,18 +13,26 @@ private let logger = Logger(
 )
 
 public struct BenchmarkingView<G: GenerableView>: View {
+  private let model: any LanguageModel
   private let instructions: String
   private let prompt: String
   @State private var generator: BenchmarkingGenerator<G>
   @State private var shouldPrewarm: Bool = false
   @State private var errorMessage: String? = nil
 
-  public init(instructions: String, prompt: String, shouldPrewarm: Bool) {
+  public init(
+    model: any LanguageModel = SystemLanguageModel.default,
+    instructions: String,
+    prompt: String,
+    shouldPrewarm: Bool
+  ) {
+    self.model = model
     self.instructions = instructions
     self.prompt = prompt
     _shouldPrewarm = State(initialValue: shouldPrewarm)
     _generator = State(
       initialValue: BenchmarkingGenerator(
+        model: model,
         instructions: instructions,
         shouldPrewarm: shouldPrewarm
       )
@@ -34,6 +42,7 @@ public struct BenchmarkingView<G: GenerableView>: View {
   func resetGenerator() {
     errorMessage = nil
     self.generator = BenchmarkingGenerator(
+      model: model,
       instructions: instructions,
       shouldPrewarm: shouldPrewarm
     )
