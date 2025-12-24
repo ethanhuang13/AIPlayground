@@ -64,8 +64,10 @@ AIPlayground/
 │   ├── AIPlayground/              # 主要 Library
 │   │   ├── Foundation Models #Playground/  # Playground 範例
 │   │   └── Foundation Models #Preview/     # SwiftUI Preview 範例
-│   └── FoundationModelsUI/        # UI 工具 Library
-│       └── BenchmarkingView.swift # 效能測試工具
+│   ├── FoundationModelsUI/        # UI 工具 Library
+│   │   └── BenchmarkingView.swift # 效能測試工具
+│   └── SampleApp/                 # Sample App 的程式碼
+│       └── AIPlaygroundApp.swift  # Sample App 進入點
 ├── Xcode/                         # Sample App 專案
 │   └── AIPlayground.xcworkspace
 └── README.md
@@ -184,6 +186,10 @@ import FoundationModelsUI
 // 或參考範例來建立你自己的 Foundation Models 應用
 ```
 
+### 使用 AnyLanguageModel
+
+此範例支援從 Foundation Models framework 遷移到使用 [AnyLanguageModel](https://github.com/mattt/AnyLanguageModel)，是一個語法相容套件，目標是可以支援其他第三方模型，但盡可能保持原有的資料結構與工具使用。請參考 [🕳️iOS 本地 AI：準備踩坑 AnyLanguageModel](https://ethanhuang13.plus/local-ai-series-anylanguagemodel-prepare/) 與之後的文章
+
 ## 貢獻與支持
 
 這個專案是 [13+ 專欄](https://ethanhuang13.plus/) 的配套教材。如果你覺得這個專案對你有幫助：
@@ -193,7 +199,3 @@ import FoundationModelsUI
 - 加入 [13+ 專欄](https://ethanhuang13.plus/) 獲得更深入的學習內容
 
 如有任何問題或建議，歡迎新增 Issue 討論。
-
----
-
-**Made with ❤️ by [Ethan Huang](https://twitter.com/ethanhuang13)**
