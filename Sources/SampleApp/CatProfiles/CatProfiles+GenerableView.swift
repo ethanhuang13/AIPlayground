@@ -18,7 +18,9 @@ extension CatProfiles: GenerableView {}
 extension CatProfiles.PartiallyGenerated: View {
   var body: some View {
     if let catProfiles {
-      ForEach(catProfiles) {
+      // XXX: Workaround of an AnyLanguageModel's @Generable macro bug:
+      // It generated `var [CatProfile]` instead of `var [CatProfile].PartiallyGenerated`
+      ForEach(catProfiles.asPartiallyGenerated()) {
         catProfile in catProfile
       }
     }
