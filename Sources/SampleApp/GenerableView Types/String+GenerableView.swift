@@ -10,7 +10,10 @@ import SwiftUI
 extension String: GenerableView {}
 extension String: @retroactive View {
   public var body: some View {
-    if let text = try? AttributedString(markdown: self) {
+    if let text = try? AttributedString(
+      markdown: self,
+      options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+    ) {
       Text(text)
     } else {
       Text(self)
