@@ -17,6 +17,7 @@ public struct BenchmarkingView<G: GenerableView>: View {
   private let prompt: String
   @State private var generator: BenchmarkingGenerator<G>
   @State private var shouldPrewarm: Bool = false
+  @State private var errorMessage: String? = nil
 
   public init(instructions: String, prompt: String, shouldPrewarm: Bool) {
     self.instructions = instructions
@@ -31,6 +32,7 @@ public struct BenchmarkingView<G: GenerableView>: View {
   }
 
   func resetGenerator() {
+    errorMessage = nil
     self.generator = BenchmarkingGenerator(
       instructions: instructions,
       shouldPrewarm: shouldPrewarm
@@ -43,6 +45,13 @@ public struct BenchmarkingView<G: GenerableView>: View {
         Section {
           instructionsView
           promptView
+          if let errorMessage {
+            Label {
+              Text(errorMessage)
+            } icon: {
+              Image(systemName: "xmark.octagon.fill")
+            }
+          }
           if generator.firstResponseDuration > 0 {
             firstResponseDurationView
           }
@@ -154,7 +163,7 @@ public struct BenchmarkingView<G: GenerableView>: View {
           )
         } catch {
           logger.error("\(error)")
-          // TODO: Show error messages on UI
+          errorMessage = "\(error)"
         }
       }
     } label: {
@@ -174,7 +183,7 @@ public struct BenchmarkingView<G: GenerableView>: View {
           )
         } catch {
           logger.error("\(error)")
-          // TODO: Show error messages on UI
+          errorMessage = "\(error)"
         }
       }
     } label: {
