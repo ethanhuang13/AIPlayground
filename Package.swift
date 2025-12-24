@@ -26,11 +26,18 @@ let foundationModelsUI = SingleTargetLibrary(
   ]
 )
 
-let app = SingleTargetLibrary(
+let aiPlayground = SingleTargetLibrary(
   name: "AIPlayground",
   dependencies: [
     foundationModelsUI.targetDependency,
     anyLanguageModel.targetDependency(traits: [anyLanguageModelTrait]),
+  ]
+)
+
+let sampleApp = SingleTargetLibrary(
+  name: "SampleApp",
+  dependencies: [
+    aiPlayground.targetDependency
   ]
 )
 
@@ -39,18 +46,23 @@ let package = Package(
   platforms: [.macOS(osVersion), .iOS(osVersion)],
   products: [
     foundationModelsUI.product,
-    app.product,
+    aiPlayground.product,
+    sampleApp.product,
   ],
   traits: [
     .trait(name: anyLanguageModelTrait),
-    .default(enabledTraits: []),  // Add `anyLanguageModelTrait` to enable using AnyLanguageModel package. Noted that you may need to restart Xcode and clean the project after changing enabledTraits
+    .default(
+      enabledTraits: [anyLanguageModelTrait]
+    ),
+    // Add `anyLanguageModelTrait` to enable using AnyLanguageModel package. Noted that you may need to restart Xcode and clean the project after changing enabledTraits
   ],
   dependencies: [
     anyLanguageModel.package
   ],
   targets: [
     foundationModelsUI.target,
-    app.target,
+    aiPlayground.target,
+    sampleApp.target,
   ]
 )
 

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6CD3A1D22EF982C100FF8335 /* AIPlayground in Frameworks */ = {isa = PBXBuildFile; productRef = 6CD3A1D12EF982C100FF8335 /* AIPlayground */; };
+		6CD3A2822EFBE19500FF8335 /* SampleApp in Frameworks */ = {isa = PBXBuildFile; productRef = 6CD3A2812EFBE19500FF8335 /* SampleApp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6CD3A1D22EF982C100FF8335 /* AIPlayground in Frameworks */,
+				6CD3A2822EFBE19500FF8335 /* SampleApp in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,7 +78,7 @@
 			);
 			name = AIPlaygroundApp;
 			packageProductDependencies = (
-				6CD3A1D12EF982C100FF8335 /* AIPlayground */,
+				6CD3A2812EFBE19500FF8335 /* SampleApp */,
 			);
 			productName = AIPlayground;
 			productReference = 6CD976C52EE7E2A900B86C94 /* AIPlaygroundApp.app */;
@@ -383,9 +383,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6CD3A1D12EF982C100FF8335 /* AIPlayground */ = {
+		6CD3A2812EFBE19500FF8335 /* SampleApp */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = AIPlayground;
+			productName = SampleApp;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
