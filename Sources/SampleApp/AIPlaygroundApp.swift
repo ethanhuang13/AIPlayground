@@ -11,7 +11,7 @@ import SwiftUI
 struct AIPlaygroundApp: App {
   var body: some Scene {
     WindowGroup {
-      WeakSelfPodcastBenchmarkingView()
+      MLXView()
     }
   }
 }
