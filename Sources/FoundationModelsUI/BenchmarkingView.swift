@@ -57,6 +57,7 @@ public struct BenchmarkingView<G: GenerableView>: View {
           if let errorMessage {
             Label {
               Text(errorMessage)
+                .textSelection(.enabled)
             } icon: {
               Image(systemName: "xmark.octagon.fill")
             }
@@ -91,7 +92,10 @@ public struct BenchmarkingView<G: GenerableView>: View {
   @ViewBuilder
   private var instructionsView: some View {
     Label(
-      title: { Text(instructions) },
+      title: {
+        Text(instructions)
+          .textSelection(.enabled)
+      },
       icon: { Image(systemName: "location.north.fill") }
     )
   }
@@ -99,7 +103,10 @@ public struct BenchmarkingView<G: GenerableView>: View {
   @ViewBuilder
   private var promptView: some View {
     Label(
-      title: { Text(prompt) },
+      title: {
+        Text(prompt)
+          .textSelection(.enabled)
+      },
       icon: { Image(systemName: "hand.point.right") }
     )
   }
