@@ -13,6 +13,7 @@ private let logger = Logger(
 )
 
 public struct BenchmarkingView<G: GenerableView>: View {
+  private let modelName: String?
   private let model: any LanguageModel
   private let instructions: String
   private let prompt: String
@@ -21,11 +22,13 @@ public struct BenchmarkingView<G: GenerableView>: View {
   @State private var errorMessage: String? = nil
 
   public init(
+    modelName: String? = nil,
     model: any LanguageModel = SystemLanguageModel.default,
     instructions: String,
     prompt: String,
     shouldPrewarm: Bool
   ) {
+    self.modelName = modelName
     self.model = model
     self.instructions = instructions
     self.prompt = prompt
@@ -58,27 +61,13 @@ public struct BenchmarkingView<G: GenerableView>: View {
     NavigationStack {
       List {
         Section {
+          modelNameView
           instructionsView
           promptView
-          if let errorMessage {
-            Label {
-              Text(errorMessage)
-                .textSelection(.enabled)
-            } icon: {
-              Image(systemName: "xmark.octagon.fill")
-            }
-          }
-          if generator.firstResponseDuration > 0 {
-            firstResponseDurationView
-          }
-          if generator.totalDuration > 0 {
-            totalDurationView
-          }
-          if generator.response != nil
-            && generator.isResponding == false
-          {
-            resetButton
-          }
+          errorMessageView
+          firstResponseDurationView
+          totalDurationView
+          resetButton
         }
 
         Section {
@@ -96,61 +85,79 @@ public struct BenchmarkingView<G: GenerableView>: View {
   }
 
   @ViewBuilder
+  private var modelNameView: some View {
+    if let modelName {
+      Label(modelName, systemImage: "textformat")
+        .textSelection(.enabled)
+    }
+  }
+
+  @ViewBuilder
   private var instructionsView: some View {
-    Label(
-      title: {
-        Text(instructions)
-          .textSelection(.enabled)
-      },
-      icon: { Image(systemName: "location.north.fill") }
-    )
+    Label(instructions, systemImage: "location.north.fill")
+      .textSelection(.enabled)
   }
 
   @ViewBuilder
   private var promptView: some View {
-    Label(
-      title: {
-        Text(prompt)
+    Label(prompt, systemImage: "hand.point.right")
+      .textSelection(.enabled)
+  }
+
+  @ViewBuilder
+  private var errorMessageView: some View {
+    if let errorMessage {
+      Label {
+        Text(errorMessage)
           .textSelection(.enabled)
-      },
-      icon: { Image(systemName: "hand.point.right") }
-    )
+      } icon: {
+        Image(systemName: "xmark.octagon.fill")
+      }
+    }
   }
 
   @ViewBuilder
   private var firstResponseDurationView: some View {
-    Label(
-      title: {
-        Text(
-          "First response: \(generator.firstResponseDuration, format: .number.precision(.fractionLength(3))) seconds"
-        )
-      },
-      icon: {
-        Image(systemName: "textformat.superscript")
-      }
-    )
+    if generator.firstResponseDuration > 0 {
+      Label(
+        title: {
+          Text(
+            "First response: \(generator.firstResponseDuration, format: .number.precision(.fractionLength(3))) seconds"
+          )
+        },
+        icon: {
+          Image(systemName: "textformat.superscript")
+        }
+      )
+    }
   }
 
   @ViewBuilder
   private var totalDurationView: some View {
-    Label(
-      title: {
-        Text(
-          "Total time: \(generator.totalDuration, format: .number.precision(.fractionLength(3))) seconds"
-        )
-      },
-      icon: {
-        Image(systemName: "textformat.characters.arrow.left.and.right")
-      }
-    )
+    if generator.totalDuration > 0 {
+      Label(
+        title: {
+          Text(
+            "Total time: \(generator.totalDuration, format: .number.precision(.fractionLength(3))) seconds"
+          )
+        },
+        icon: {
+          Image(systemName: "textformat.characters.arrow.left.and.right")
+        }
+      )
+    }
   }
 
   @ViewBuilder
   private var resetButton: some View {
-    Button {
-      resetGenerator()
-    } label: {
-      Label("Reset", systemImage: "arrow.clockwise")
+    if generator.response != nil
+      && generator.isResponding == false
+    {
+      Button {
+        resetGenerator()
+      } label: {
+        Label("Reset", systemImage: "arrow.clockwise")
+      }
     }
   }
 
