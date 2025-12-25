@@ -26,18 +26,17 @@ public struct BenchmarkingView<G: GenerableView>: View {
     model: any LanguageModel = SystemLanguageModel.default,
     instructions: String,
     prompt: String,
-    shouldPrewarm: Bool
+    shouldPrewarm: Bool = false
   ) {
     self.modelName = modelName
     self.model = model
     self.instructions = instructions
     self.prompt = prompt
 
-    if model is SystemLanguageModel {
-      _shouldPrewarm = State(initialValue: shouldPrewarm)
-    } else {
-      _shouldPrewarm = State(initialValue: false)
-    }
+    let shouldPrewarm =
+      (model is SystemLanguageModel)
+      ? shouldPrewarm
+      : false
 
     _generator = State(
       initialValue: BenchmarkingGenerator(
