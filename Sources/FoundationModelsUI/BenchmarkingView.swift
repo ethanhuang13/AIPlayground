@@ -29,7 +29,13 @@ public struct BenchmarkingView<G: GenerableView>: View {
     self.model = model
     self.instructions = instructions
     self.prompt = prompt
-    _shouldPrewarm = State(initialValue: shouldPrewarm)
+
+    if model is SystemLanguageModel {
+      _shouldPrewarm = State(initialValue: shouldPrewarm)
+    } else {
+      _shouldPrewarm = State(initialValue: false)
+    }
+
     _generator = State(
       initialValue: BenchmarkingGenerator(
         model: model,
@@ -166,6 +172,7 @@ public struct BenchmarkingView<G: GenerableView>: View {
       Label("Prewarm", systemImage: "flame.fill")
     }
     .disabled(generator.isResponding)
+    .disabled((model is SystemLanguageModel) == false)
   }
 
   @ViewBuilder
