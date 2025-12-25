@@ -60,8 +60,8 @@ private struct CatSelectionView: View {
         }
       } else {
         List {
-          // partialGenerated 自動提供 id 屬性，方便給 SwiftUI 的 ForEach 使用
-          ForEach(generator.catProfiles) { profile in
+          // XXX: AnyLanguageModel does not support Identifiable yet
+          ForEach(generator.catProfiles, id: \.generatedContent.id) { profile in
             if let name = profile.name {
               VStack(alignment: .leading) {
                 HStack {
