@@ -15,8 +15,10 @@ extension String: @retroactive View {
       options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
     ) {
       Text(text)
+        .textSelection(.enabled)
     } else {
       Text(self)
+        .textSelection(.enabled)
     }
   }
 }
