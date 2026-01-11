@@ -20,8 +20,7 @@ extension CatProfiles.PartiallyGenerated: View {
     if let catProfiles {
       // XXX: Workaround of an AnyLanguageModel's @Generable macro bug:
       // It generated `var [CatProfile]` instead of `var [CatProfile].PartiallyGenerated`
-      // XXX: AnyLanguageModel does not support Identifiable yet
-      ForEach(catProfiles.asPartiallyGenerated(), id: \.generatedContent.id) {
+      ForEach(catProfiles.asPartiallyGenerated()) {
         catProfile in catProfile
       }
     }
