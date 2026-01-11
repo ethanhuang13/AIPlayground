@@ -37,23 +37,43 @@ public class BenchmarkingGenerator<G: Generable> {
     return endDate.timeIntervalSince(beginDate)
   }
 
-  public init(
-    model: any LanguageModel,
-    instructions: String,
-    shouldPrewarm: Bool
-  ) {
-    session = LanguageModelSession(
-      model: model,
-      instructions: instructions
-    )
+  #if AnyLanguageModel
+    public init(
+      model: any LanguageModel,
+      instructions: String,
+      shouldPrewarm: Bool
+    ) {
+      session = LanguageModelSession(
+        model: model,
+        instructions: instructions
+      )
 
-    self.shouldPrewarm = shouldPrewarm
-    if shouldPrewarm {
-      session.prewarm()
+      self.shouldPrewarm = shouldPrewarm
+      if shouldPrewarm {
+        session.prewarm()
+      }
+
+      logger.log("Init")
     }
+  #else
+    public init(
+      model: SystemLanguageModel,
+      instructions: String,
+      shouldPrewarm: Bool
+    ) {
+      session = LanguageModelSession(
+        model: model,
+        instructions: instructions
+      )
 
-    logger.log("Init")
-  }
+      self.shouldPrewarm = shouldPrewarm
+      if shouldPrewarm {
+        session.prewarm()
+      }
+
+      logger.log("Init")
+    }
+  #endif
 
   public func generate(to prompt: Prompt, streaming: Bool) async throws {
     self.beginDate = Date()

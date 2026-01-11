@@ -51,9 +51,7 @@ let package = Package(
   ],
   traits: [
     .trait(name: anyLanguageModelTrait),
-    .default(
-      enabledTraits: [anyLanguageModelTrait]
-    ),
+    .default(enabledTraits: []),
     // Add `anyLanguageModelTrait` to enable using AnyLanguageModel package. Noted that you may need to restart Xcode and clean the project after changing enabledTraits
   ],
   dependencies: [

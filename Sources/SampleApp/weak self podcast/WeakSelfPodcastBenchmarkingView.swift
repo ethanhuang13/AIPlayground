@@ -10,13 +10,16 @@ import SwiftUI
 struct WeakSelfPodcastBenchmarkingView: View {
   var body: some View {
     let foundationModel = SystemLanguageModel.default
-    // We use LM Studio as local LLM server
-    // You can use other models service providers
-    let lmStudio = OpenAILanguageModel(
-      baseURL: URL(string: "http://localhost:1234/v1")!,
-      apiKey: "",
-      model: "google/gemma-3n-e4b",
-    )
+
+    #if AnyLanguageModel
+      // We use LM Studio as local LLM server
+      // You can use other models service providers
+      let lmStudio = OpenAILanguageModel(
+        baseURL: URL(string: "http://localhost:1234/v1")!,
+        apiKey: "",
+        model: "google/gemma-3n-e4b",
+      )
+    #endif
 
     BenchmarkingView<String>(
       model: foundationModel,  //lmStudio, // select your own model or switch back to

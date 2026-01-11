@@ -13,31 +13,56 @@ private let logger = Logger(
 )
 
 public struct BenchmarkingView<G: GenerableView>: View {
-  private let model: any LanguageModel
+  #if AnyLanguageModel
+    private let model: any LanguageModel
+  #else
+    private let model: SystemLanguageModel
+  #endif
   private let instructions: String
   private let prompt: String
   @State private var generator: BenchmarkingGenerator<G>
   @State private var shouldPrewarm: Bool = false
   @State private var errorMessage: String? = nil
 
-  public init(
-    model: any LanguageModel = SystemLanguageModel.default,
-    instructions: String,
-    prompt: String,
-    shouldPrewarm: Bool
-  ) {
-    self.model = model
-    self.instructions = instructions
-    self.prompt = prompt
-    _shouldPrewarm = State(initialValue: shouldPrewarm)
-    _generator = State(
-      initialValue: BenchmarkingGenerator(
-        model: model,
-        instructions: instructions,
-        shouldPrewarm: shouldPrewarm
+  #if AnyLanguageModel
+    public init(
+      model: any LanguageModel = SystemLanguageModel.default,
+      instructions: String,
+      prompt: String,
+      shouldPrewarm: Bool
+    ) {
+      self.model = model
+      self.instructions = instructions
+      self.prompt = prompt
+      _shouldPrewarm = State(initialValue: shouldPrewarm)
+      _generator = State(
+        initialValue: BenchmarkingGenerator(
+          model: model,
+          instructions: instructions,
+          shouldPrewarm: shouldPrewarm
+        )
       )
-    )
-  }
+    }
+  #else
+    public init(
+      model: SystemLanguageModel = .default,
+      instructions: String,
+      prompt: String,
+      shouldPrewarm: Bool
+    ) {
+      self.model = model
+      self.instructions = instructions
+      self.prompt = prompt
+      _shouldPrewarm = State(initialValue: shouldPrewarm)
+      _generator = State(
+        initialValue: BenchmarkingGenerator(
+          model: model,
+          instructions: instructions,
+          shouldPrewarm: shouldPrewarm
+        )
+      )
+    }
+  #endif
 
   func resetGenerator() {
     errorMessage = nil
