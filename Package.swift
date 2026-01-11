@@ -11,8 +11,8 @@ let anyLanguageModelTrait = "AnyLanguageModel"
 
 let anyLanguageModel = SourceControlDependency(
   package: .package(
-    url: "https://github.com/mattt/AnyLanguageModel",
-    exact: "0.5.3",
+    url: "https://github.com/ethanhuang13/AnyLanguageModel",
+    branch: "partially-generated-fix",
     traits: ["MLX"]
   ),
   productName: "AnyLanguageModel"
