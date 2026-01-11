@@ -11,15 +11,18 @@ let anyLanguageModelTrait = "AnyLanguageModel"
 
 let anyLanguageModel = SourceControlDependency(
   package: .package(
-//    url: "https://github.com/ethanhuang13/AnyLanguageModel",
-//    branch: "add-identifiable-conformance",  // Commit: 9dfb06f0449cae1d67a8205ec99b11f73434cff8
-
-    // XXX: A working fork for MLX support
-    url: "https://github.com/XMLHexagram/AnyLanguageModel",
-    revision: "96bc4406f5d652bc65b8a5827fabd4333931b14a",
+    url: "https://github.com/mattt/AnyLanguageModel",
+    exact: "0.5.3",
     traits: ["MLX"]
   ),
   productName: "AnyLanguageModel"
+)
+let mlxSwiftLm = SourceControlDependency(
+  package: .package(
+    url: "https://github.com/ml-explore/mlx-swift-lm",
+    branch: "main"
+  ),
+  productName: "MLXLLM"
 )
 
 // MARK: - Modules. Ordered by dependency hierarchy.
@@ -62,7 +65,9 @@ let package = Package(
     // Add `anyLanguageModelTrait` to enable using AnyLanguageModel package. Noted that you may need to restart Xcode and clean the project after changing enabledTraits
   ],
   dependencies: [
-    anyLanguageModel.package
+    anyLanguageModel.package,
+    // XXX: Help SPM resolves mlx-swift-lm
+    mlxSwiftLm.package,
   ],
   targets: [
     foundationModelsUI.target,
