@@ -1,13 +1,13 @@
 {
-  "originHash" : "5a4c21e50ed0f702fb820bd0de30fd08a8c98560e22b3301d6abd55944955c07",
+  "originHash" : "45a3c6b607c4bff7fe4cba3380c3e432d17c1af9313dbe5ca29c53336c2f1fe7",
   "pins" : [
     {
       "identity" : "anylanguagemodel",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ethanhuang13/AnyLanguageModel",
+      "location" : "https://github.com/mattt/AnyLanguageModel",
       "state" : {
-        "branch" : "add-identifiable-conformance",
-        "revision" : "9dfb06f0449cae1d67a8205ec99b11f73434cff8"
+        "revision" : "67837bf5af1a440eaf92aa2de91abeb7835f4f20",
+        "version" : "0.5.3"
       }
     },
     {

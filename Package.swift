@@ -11,8 +11,8 @@ let anyLanguageModelTrait = "AnyLanguageModel"
 
 let anyLanguageModel = SourceControlDependency(
   package: .package(
-    url: "https://github.com/ethanhuang13/AnyLanguageModel",
-    branch: "add-identifiable-conformance"  // Commit: 9dfb06f0449cae1d67a8205ec99b11f73434cff8
+    url: "https://github.com/mattt/AnyLanguageModel",
+    exact: "0.5.3"
   ),
   productName: "AnyLanguageModel"
 )
